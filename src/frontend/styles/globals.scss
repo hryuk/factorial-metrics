@@ -1,0 +1,24 @@
+
+@font-face {
+  font-family: "RobotoRegular";
+  src: url('/fonts/Roboto-Regular.ttf');
+}
+
+#__next {
+  display: flex;
+  flex: 1;
+  min-height: 100vh;
+  max-height: 100vh;
+}
+
+body {
+  display: flex;
+  font-family: "RobotoRegular";
+  margin: 0;
+  min-width: 100vw;
+  max-width: 100vw;
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow-x: hidden;
+}
+

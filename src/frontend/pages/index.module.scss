@@ -1,0 +1,35 @@
+
+.factorial-controls{
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    flex:1;
+    position: relative;
+    max-height: 600px;
+    min-height: 600px;
+    align-items: center;
+
+}
+.factorial-calculator{
+    display: flex;
+    flex:1;
+    max-width: 400px;
+    max-height: 40px;
+    min-height: 40px;
+}
+
+.factorial-results{
+    display: flex;
+    flex:1;
+    max-height: calc(100% - 50px);
+    min-height: calc(100% - 50px);
+    overflow-y: auto;
+}
+
+.chart-card{
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    max-height: 400px;
+    min-height: 400px;
+}

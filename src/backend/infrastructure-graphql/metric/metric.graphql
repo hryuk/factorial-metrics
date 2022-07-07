@@ -1,0 +1,14 @@
+type Metric {
+  id: String!
+  name: String!
+  value: Float!
+  timestamp: String!
+}
+
+type Query {
+  metrics(name: String!, from: String, to: String): [Metric!]!
+}
+
+type Subscription {
+  metricAdded(name: String!): Metric
+}

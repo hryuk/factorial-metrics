@@ -1,0 +1,32 @@
+.navbar {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.left-buttons {
+  display: flex;
+  flex: 1;
+}
+
+.center-buttons {
+  display: flex;
+  flex: 1;
+}
+
+.right-buttons {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.sidebar-icon {
+  height: 50px;
+  min-width: 50px;
+  margin: 0 5px;
+}
+
+.sidebar-button {
+  margin: 0 5px;
+}

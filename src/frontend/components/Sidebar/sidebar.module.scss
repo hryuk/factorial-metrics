@@ -1,0 +1,23 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar ul {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.spacer {
+  display: flex;
+  flex: 1;
+}
+
+.collapse-button {
+  display: flex;
+  width: 100%;
+  min-height: 40px;
+  justify-content: center;
+  align-items: center;
+}

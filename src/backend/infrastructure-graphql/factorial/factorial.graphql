@@ -1,0 +1,8 @@
+type FactorialResult {
+  result: String!
+  seconds: Int!
+}
+
+type Mutation {
+  factorial(number: Int!): FactorialResult!
+}

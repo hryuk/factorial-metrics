@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  crdb:
+    image: cockroachdb/cockroach:v21.2.3
+    container_name: crdb-1
+    ports:
+      - "26257:26257"
+      - "8080:8080"
+    command: start-single-node --insecure --listen-addr=0.0.0.0
+    volumes:
+      - "../cockroach-data/crdb:/cockroach/cockroach-data"
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server
+    volumes:
+      - ../redis-data/redis:/data
