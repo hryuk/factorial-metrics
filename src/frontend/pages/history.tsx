@@ -1,18 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { Button, Card, Col, DatePicker, Row } from "antd";
+import { Button, Col, DatePicker, Row } from "antd";
 
 import styles from "./history.module.scss";
 
 import dynamic from "next/dynamic";
+import { SearchOutlined } from "@ant-design/icons";
 
 import type { DatePickerProps, RangePickerProps } from "antd/es/date-picker";
-import { Metric, useMetrics } from "../hooks/useMetrics";
 import moment from "moment";
+import { TimeRange } from "../components/HistoryChart";
 
 const { RangePicker } = DatePicker;
 
-const HistoryChart = dynamic<any>(
+const HistoryChart = dynamic(
   () =>
     import("../components/HistoryChart").then(
       ({ HistoryChart }) => HistoryChart
@@ -22,24 +23,18 @@ const HistoryChart = dynamic<any>(
   }
 );
 
-interface Range {
-  from?: Date;
-  to?: Date;
-}
-
 interface HistoryProps {}
 
 const History: React.FC<HistoryProps> = () => {
-  const [cpuMetrics, setCpuMetrics] = useState<Metric[]>([]);
-
-  const [timeRange, setTimeRange] = useState<Range>({});
-
-  const { getAll } = useMetrics();
+  const [timeRange, setTimeRange] = useState<TimeRange>({
+    from: moment().subtract(1, "hour").toDate(),
+    to: moment().toDate(),
+  });
 
   const handleDateRangeChange = async (
     value: DatePickerProps["value"] | RangePickerProps["value"]
   ) => {
-    const timeRange: Range = {
+    const timeRange: TimeRange = {
       from: value[0]?.toDate(),
       to: value[1]?.toDate(),
     };
@@ -54,32 +49,36 @@ const History: React.FC<HistoryProps> = () => {
     });
   };
 
-  const getMetrics = useCallback(async () => {
-    setCpuMetrics(await getAll("CPU", timeRange.from, timeRange.to));
-  }, [getAll, timeRange]);
-
-  useEffect(() => {
-    getMetrics();
-  }, [getMetrics]);
-
   return (
-    <Row>
-      <RangePicker
-        showTime={{ format: "HH:mm" }}
-        format="YYYY-MM-DD HH:mm"
-        onOk={handleDateRangeChange}
-        value={[
-          timeRange.from
-            ? moment(timeRange.from)
-            : moment().subtract(1, "hour"),
-          moment(timeRange.to),
-        ]}
-      />
-      <Button onClick={handleRefresh}>Refresh</Button>
-      <Card title={<h3>Historic Metrics</h3>}>
-        <HistoryChart metrics={cpuMetrics} />
-      </Card>
-    </Row>
+    <Col className={styles["history-page"]}>
+      <Row className={styles["chart-controls"]}>
+        <RangePicker
+          showTime={{ format: "HH:mm" }}
+          format="YYYY-MM-DD HH:mm"
+          onOk={handleDateRangeChange}
+          value={[
+            timeRange.from
+              ? moment(timeRange.from)
+              : moment().subtract(1, "hour"),
+            moment(timeRange.to),
+          ]}
+        />
+        <Button
+          type="primary"
+          icon={<SearchOutlined />}
+          onClick={handleRefresh}
+        />
+      </Row>
+      <Row className={styles["chart-container"]}>
+        <HistoryChart
+          timeRange={timeRange}
+          metrics={[
+            { name: "CPU", color: "#ff355e" },
+            { name: "RAM", color: "#07a2ad" },
+          ]}
+        />
+      </Row>
+    </Col>
   );
 };
 

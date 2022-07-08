@@ -1,18 +1,20 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { Button, Card, Col, DatePicker, Row } from "antd";
+import { Button, Col, DatePicker, Row } from "antd";
+
+import { SearchOutlined } from "@ant-design/icons";
 
 import styles from "./stats.module.scss";
 
 import dynamic from "next/dynamic";
 
 import type { DatePickerProps, RangePickerProps } from "antd/es/date-picker";
-import { Metric, useMetrics } from "../hooks/useMetrics";
 import moment from "moment";
+import { TimeRange } from "../components/HistoryChart";
 
 const { RangePicker } = DatePicker;
 
-const HistoryChart = dynamic<any>(
+const HistoryChart = dynamic(
   () =>
     import("../components/HistoryChart").then(
       ({ HistoryChart }) => HistoryChart
@@ -22,26 +24,18 @@ const HistoryChart = dynamic<any>(
   }
 );
 
-interface Range {
-  from?: Date;
-  to?: Date;
-}
-
 interface HistoryProps {}
 
 const History: React.FC<HistoryProps> = () => {
-  const [minuteAverages, setMinuteAverages] = useState<Metric[]>([]);
-  const [hourAverages, setHourAverages] = useState<Metric[]>([]);
-  const [dayAverages, setDayAverages] = useState<Metric[]>([]);
-
-  const [timeRange, setTimeRange] = useState<Range>({});
-
-  const { getAll } = useMetrics();
+  const [timeRange, setTimeRange] = useState<TimeRange>({
+    from: moment().subtract(1, "day").toDate(),
+    to: moment().toDate(),
+  });
 
   const handleDateRangeChange = async (
     value: DatePickerProps["value"] | RangePickerProps["value"]
   ) => {
-    const timeRange: Range = {
+    const timeRange: TimeRange = {
       from: value[0]?.toDate(),
       to: value[1]?.toDate(),
     };
@@ -51,54 +45,60 @@ const History: React.FC<HistoryProps> = () => {
 
   const handleRefresh = async () => {
     setTimeRange({
-      from: moment().subtract(1, "hour").toDate(),
+      from: moment().subtract(1, "day").toDate(),
       to: moment().toDate(),
     });
   };
 
-  const getMetrics = useCallback(async () => {
-    setMinuteAverages(
-      await getAll("CPU_MINUTE_AVERAGE", timeRange.from, timeRange.to)
-    );
-    setHourAverages(
-      await getAll("CPU_HOUR_AVERAGE", timeRange.from, timeRange.to)
-    );
-    setDayAverages(
-      await getAll("CPU_DAY_AVERAGE", timeRange.from, timeRange.to)
-    );
-  }, [getAll, timeRange]);
-
-  useEffect(() => {
-    getMetrics();
-  }, [getMetrics]);
-
   return (
-    <Row>
-      <RangePicker
-        showTime={{ format: "HH:mm" }}
-        format="YYYY-MM-DD HH:mm"
-        onOk={handleDateRangeChange}
-        value={[
-          timeRange.from
-            ? moment(timeRange.from)
-            : moment().subtract(1, "hour"),
-          moment(timeRange.to),
-        ]}
-      />
-      <Button onClick={handleRefresh}>Refresh</Button>
-
-      <Card title={<h3>Minute Averages</h3>}>
-        <HistoryChart metrics={minuteAverages} />
-      </Card>
-      <Row className={"hourly-daily-container"}>
-        <Card title={<h3>Hourly Averages</h3>}>
-          <HistoryChart metrics={hourAverages} />
-        </Card>
-        <Card title={<h3>Daily Averages</h3>}>
-          <HistoryChart metrics={dayAverages} />
-        </Card>
+    <Col className={styles["stats-page"]}>
+      <Row className={styles["stats-controls"]}>
+        <RangePicker
+          showTime={{ format: "HH:mm" }}
+          format="YYYY-MM-DD HH:mm"
+          onOk={handleDateRangeChange}
+          value={[
+            timeRange.from
+              ? moment(timeRange.from)
+              : moment().subtract(1, "day"),
+            moment(timeRange.to),
+          ]}
+        />
+        <Button
+          type="primary"
+          icon={<SearchOutlined />}
+          onClick={handleRefresh}
+        />
       </Row>
-    </Row>
+      <Row className={styles["minute-container"]}>
+        <HistoryChart
+          title="Average per minute"
+          timeRange={timeRange}
+          metrics={[
+            { name: "CPU_MINUTE_AVERAGE", color: "#ff355e" },
+            { name: "RAM_MINUTE_AVERAGE", color: "#07a2ad" },
+          ]}
+        />
+      </Row>
+      <Row className={styles["hourly-daily-container"]}>
+        <HistoryChart
+          title="Hourly average"
+          timeRange={timeRange}
+          metrics={[
+            { name: "CPU_HOUR_AVERAGE", color: "#ff355e" },
+            { name: "RAM_HOUR_AVERAGE", color: "#07a2ad" },
+          ]}
+        />
+        <HistoryChart
+          title="Daily average"
+          timeRange={timeRange}
+          metrics={[
+            { name: "CPU_DAY_AVERAGE", color: "#ff355e" },
+            { name: "RAM_DAY_AVERAGE", color: "#07a2ad" },
+          ]}
+        />
+      </Row>
+    </Col>
   );
 };
 

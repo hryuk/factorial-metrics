@@ -1,4 +1,43 @@
+.stats-page{
+    display: flex;
+    flex-direction: column;
+    flex:1;
+}
+
+.stats-controls{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.minute-container{
+    display: flex;
+    flex:1;
+    max-height: calc(50% - 30px);
+    min-height:calc(50% - 30px);
+    margin-bottom: 20px;
+}
+
+.minute-card{
+    display: flex;
+    flex:1;
+    flex-direction: column;
+}
+
 .hourly-daily-container{
     display: flex;
-    flex: 1;
+    flex:1;
+    max-height: calc(50% - 40px);
+    min-height: calc(50% - 40px);
+    flex-flow: nowrap;
+}
+
+.hourly-chart{
+    margin-right: 20px;
+}
+
+.hourly-chart, .daily-chart{
+    display: flex;
+    flex-direction: column;
+    flex:1;
 }

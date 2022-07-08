@@ -1,0 +1,22 @@
+.history-page{
+    display: flex;
+    flex-direction: column;
+    flex:1;
+    position:relative;
+}
+
+.chart-controls{
+    display: flex;
+    flex:1;
+    max-height: 32px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.chart-container{
+    display: flex;
+    flex-direction: column;
+    flex:1;
+
+}

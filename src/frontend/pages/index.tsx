@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { Input, Card, Row, Col, List, Spin } from "antd";
+import { Input, Row, Col, List, Spin } from "antd";
 
 import styles from "./index.module.scss";
 
@@ -10,10 +10,11 @@ import dynamic from "next/dynamic";
 import { gql } from "@apollo/client";
 import client from "../apollo-client";
 
-import { v4 as uuidv4 } from "uuid";
-import { useElementSize } from "usehooks-ts";
+import { SendOutlined } from "@ant-design/icons";
 
-const LiveChart = dynamic<any>(
+import { v4 as uuidv4 } from "uuid";
+
+const LiveChart = dynamic(
   () => import("../components/LiveChart").then(({ LiveChart }) => LiveChart),
   {
     ssr: false,
@@ -29,13 +30,9 @@ interface Job {
 
 interface IndexProps {}
 
-const CARD_PADDING = 24 * 2;
-
 const Index: React.FC<IndexProps> = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const jobsRef = useRef<Job[]>([]);
-
-  const [chartCardRef, { width, height }] = useElementSize();
 
   const handleSearch = (value) => {
     const id = uuidv4();
@@ -66,7 +63,7 @@ const Index: React.FC<IndexProps> = () => {
           })
         );
       } catch (error) {
-        console.log(error);
+        console.error(error);
         setJobs(
           jobsRef.current.map((v) => {
             if (v.id === newJob.id) {
@@ -86,55 +83,39 @@ const Index: React.FC<IndexProps> = () => {
   }, [jobs]);
 
   return (
-    <>
-      <Row>
-        <Col span={14}>
-          <Card
-            title={<h3>Live Metrics</h3>}
-            ref={chartCardRef}
-            className={styles["chart-card"]}
-          >
-            <LiveChart
-              width={width - CARD_PADDING}
-              height={height - CARD_PADDING}
-            />
-          </Card>
-          <Card
-            title={<h3>Live Metrics</h3>}
-            ref={chartCardRef}
-            className={styles["chart-card"]}
-          >
-            <LiveChart
-              width={width - CARD_PADDING}
-              height={height - CARD_PADDING}
-            />
-          </Card>
+    <Row className={styles["index-page"]}>
+      <Col span={14} className={styles["charts"]}>
+        <Col className={`${styles["live-chart"]} ${styles["first-chart"]}`}>
+          <LiveChart title="CPU" metricName="CPU" metricColor="#ff355e" />
         </Col>
-        <Col span={8} offset={1} className={styles["factorial-controls"]}>
-          <Search
-            className={styles["factorial-calculator"]}
-            placeholder="enter numbers to factorize"
-            enterButton="Calculate"
-            size="large"
-            loading={false}
-            onSearch={handleSearch}
-          />
-          <List
-            className={styles["factorial-results"]}
-            size="small"
-            dataSource={jobs}
-            renderItem={(job) => (
-              <List.Item>
-                {`Factorial of ${job.query}`}{" "}
-                {job.result === undefined && <Spin size="small" />}
-                {job.result === null && "Error!"}
-                {job.result && `Result: ${job.result}`}
-              </List.Item>
-            )}
-          />
+        <Col className={styles["live-chart"]}>
+          <LiveChart title="RAM" metricName="RAM" metricColor="#07a2ad" />
         </Col>
-      </Row>
-    </>
+      </Col>
+      <Col span={10} className={styles["factorial-controls"]}>
+        <Search
+          className={styles["factorial-calculator"]}
+          placeholder="enter numbers to calculate their factorials"
+          enterButton={<SendOutlined />}
+          size="large"
+          loading={false}
+          onSearch={handleSearch}
+        />
+        <List
+          className={styles["factorial-results"]}
+          size="small"
+          dataSource={jobs}
+          renderItem={(job) => (
+            <List.Item>
+              {`Factorial of ${job.query}`}{" "}
+              {job.result === undefined && <Spin size="small" />}
+              {job.result === null && "Error!"}
+              {job.result && `Result: ${job.result}`}
+            </List.Item>
+          )}
+        />
+      </Col>
+    </Row>
   );
 };
 

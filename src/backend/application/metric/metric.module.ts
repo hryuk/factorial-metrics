@@ -5,12 +5,14 @@ import { GetMetrics } from "backend/domain/metric/usecases";
 import { MetricResolver } from "backend/infrastructure-graphql/metric/metric.resolver";
 import { PrismaService } from "backend/infrastructure/prisma/prisma.service";
 import { PrismaMetricRepository } from "backend/infrastructure/metric/prisma-metric.repository";
-import { MetricPublisher } from "backend/infrastructure/metric/metric-publisher";
+import { CpuMetricPublisher } from "backend/infrastructure/metric/cpu-metric-publisher";
+import { RamMetricPublisher } from "backend/infrastructure/metric/ram-metric-publisher";
 
 @Module({
   providers: [
     MetricResolver,
-    MetricPublisher,
+    CpuMetricPublisher,
+    RamMetricPublisher,
     PrismaService,
     { provide: MetricRepository, useClass: PrismaMetricRepository },
     { provide: GetMetrics, useClass: GetMetricsImpl },

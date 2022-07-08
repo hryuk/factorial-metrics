@@ -8,7 +8,7 @@ import * as moment from "moment";
 var os = require("os-utils");
 
 @Injectable()
-export class MetricPublisher {
+export class CpuMetricPublisher {
   constructor(
     private metricRepository: MetricRepository,
     @Inject("PUB_SUB") private pubSub: RedisPubSub

@@ -1,5 +1,6 @@
 const { parentPort, workerData } = require("node:worker_threads");
 
+// Calculates the factorial of a number slowly and consuming a lot of cpu, for demo purposes
 function factorial(num) {
   var bigInt = BigInt(num);
   var result = 1n;
@@ -11,7 +12,7 @@ function factorial(num) {
       }
     }
   }
-  1;
+
   return String(result);
 }
 

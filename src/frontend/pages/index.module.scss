@@ -1,6 +1,18 @@
 
+.index-page{
+    display:flex;
+    max-height: 100%;
+    min-height: 100%;
+}
+
+.charts{
+    display:flex;
+    flex-direction: column;
+    flex:1;
+    max-height: 100%;
+}
+
 .factorial-controls{
-    padding-top: 60px;
     display: flex;
     flex-direction: column;
     flex:1;
@@ -13,9 +25,8 @@
 .factorial-calculator{
     display: flex;
     flex:1;
-    max-width: 400px;
     max-height: 40px;
-    min-height: 40px;
+    margin: 0 20px;
 }
 
 .factorial-results{
@@ -26,10 +37,11 @@
     overflow-y: auto;
 }
 
-.chart-card{
+.live-chart{
+    flex-direction: column;
     display: flex;
     flex: 1;
-    flex-direction: column;
-    max-height: 400px;
-    min-height: 400px;
+}
+.first-chart {
+    margin-bottom: 20px;
 }

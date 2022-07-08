@@ -1,28 +1,33 @@
 import { gql } from "@apollo/client";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Card } from "antd";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import UplotReact from "uplot-react";
 import "uplot/dist/uPlot.min.css";
+import { useElementSize } from "usehooks-ts";
 import client from "../../apollo-client";
 
 import { Metric } from "../../hooks/useMetrics";
 
+import styles from "./livechart.module.scss";
+
 interface LiveChartProps {
-  width: number;
-  height: number;
+  title?: string;
+  metricName: string;
+  metricColor: string;
 }
 
-const LiveChart: React.FC<LiveChartProps> = ({ width, height }) => {
+const LiveChart: React.FC<LiveChartProps> = ({
+  title,
+  metricName,
+  metricColor,
+}) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
   const [domLoaded, setDomLoaded] = useState<boolean>(false);
 
   const [data, setData] = useState<uPlot.AlignedData>([[], []]);
+
+  const [chartCardRef, { width, height }] = useElementSize();
 
   const metricsRef = useRef<Metric[]>([]);
 
@@ -30,8 +35,9 @@ const LiveChart: React.FC<LiveChartProps> = ({ width, height }) => {
 
   const options: uPlot.Options = useMemo(
     () => ({
-      width,
-      height,
+      title,
+      width: width - 48,
+      height: height - 80,
       cursor: {
         drag: {
           setScale: false,
@@ -47,10 +53,10 @@ const LiveChart: React.FC<LiveChartProps> = ({ width, height }) => {
       series: [
         {},
         {
-          label: "CPU",
+          label: metricName,
           scale: "%",
           value: (_, v) => (v == null ? "-" : v.toFixed(1) + "%"),
-          stroke: "#ff355e",
+          stroke: metricColor,
         },
       ],
       axes: [
@@ -68,7 +74,7 @@ const LiveChart: React.FC<LiveChartProps> = ({ width, height }) => {
       },
       plugins: [],
     }),
-    [width, height]
+    [width, height, metricColor, metricName, title]
   );
 
   useEffect(() => {
@@ -90,7 +96,7 @@ const LiveChart: React.FC<LiveChartProps> = ({ width, height }) => {
               }
             }
           `,
-          variables: { name: "CPU" },
+          variables: { name: metricName },
         })
         .subscribe((newData: any) => {
           if (metricsRef.current.length === 200) {
@@ -118,17 +124,17 @@ const LiveChart: React.FC<LiveChartProps> = ({ width, height }) => {
       suscribedRef.current = true;
       subscribe();
     }
-  }, [domLoaded, suscribedRef, metricsRef]);
+  }, [domLoaded, suscribedRef, metricsRef, metricName]);
 
   return (
-    <>
+    <Card className={styles["chart-card"]} ref={chartCardRef}>
       <div id="root" ref={chartRef}></div>
-      {domLoaded && suscribedRef.current /*&& data[0].length === 200*/ ? (
+      {domLoaded && suscribedRef.current ? (
         <UplotReact options={options} data={data} target={chartRef.current} />
       ) : (
         "Connecting..."
       )}
-    </>
+    </Card>
   );
 };
 
