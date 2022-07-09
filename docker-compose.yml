@@ -20,7 +20,7 @@ services:
       - ./redis-data/redis:/data
 
   factorial-metrics:
-    image: factorial/metrics:latest
+    image: ghcr.io/hryuk/factorial-metrics-local:latest
     ports:
       - 3000:3000
     environment:
