@@ -20,7 +20,6 @@ import { FactorialModule } from "./application/factorial/factorial.module";
       typePaths: ["./**/*.graphql"],
       useGlobalPrefix: true,
       driver: ApolloDriver,
-      installSubscriptionHandlers: true,
       subscriptions: {
         "graphql-ws": true,
       },

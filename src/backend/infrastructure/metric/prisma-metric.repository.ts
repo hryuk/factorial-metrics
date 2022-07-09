@@ -27,4 +27,8 @@ export class PrismaMetricRepository extends MetricRepository {
     });
     return toMetric(productDto);
   }
+
+  async getCount(): Promise<number> {
+    return await this.prismaService.dataMetric.count();
+  }
 }

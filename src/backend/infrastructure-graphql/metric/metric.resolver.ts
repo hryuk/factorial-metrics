@@ -1,13 +1,14 @@
 import { Inject } from "@nestjs/common";
 import { Resolver, Query, Args, Subscription } from "@nestjs/graphql";
 import { MetricName } from "backend/domain/metric/metric";
-import { GetMetrics } from "backend/domain/metric/usecases";
+import { GetMetricCount, GetMetrics } from "backend/domain/metric/usecases";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 
 @Resolver("metric")
 export class MetricResolver {
   constructor(
     private getMetrics: GetMetrics,
+    private getMetricCount: GetMetricCount,
     @Inject("PUB_SUB") private pubSub: RedisPubSub
   ) {}
 
@@ -29,6 +30,11 @@ export class MetricResolver {
       fromDate,
       toDate
     );
+  }
+
+  @Query("metricCount")
+  async metricCount() {
+    return await this.getMetricCount.getCount();
   }
 
   @Subscription("metricAdded", {

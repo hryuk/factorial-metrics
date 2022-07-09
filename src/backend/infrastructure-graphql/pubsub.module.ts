@@ -8,8 +8,8 @@ import { Global, Module } from "@nestjs/common";
       provide: "PUB_SUB",
       useValue: new RedisPubSub({
         connection: {
-          host: "0.0.0.0",
-          port: "6379",
+          host: process.env.REDIS_HOST,
+          port: process.env.REDIS_PORT,
         },
       }),
     },

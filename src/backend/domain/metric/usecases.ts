@@ -11,3 +11,7 @@ export abstract class GetMetrics {
 export abstract class CreateMetric {
   abstract createMetric(product: Metric): Promise<Metric>;
 }
+
+export abstract class GetMetricCount {
+  abstract getCount(): Promise<number>;
+}

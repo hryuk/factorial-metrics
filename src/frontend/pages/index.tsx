@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { Input, Row, Col, List, Spin } from "antd";
+import { Input, Row, Col, List } from "antd";
 
 import styles from "./index.module.scss";
 
@@ -10,7 +10,7 @@ import dynamic from "next/dynamic";
 import { gql } from "@apollo/client";
 import client from "../apollo-client";
 
-import { SendOutlined } from "@ant-design/icons";
+import { SendOutlined, SyncOutlined } from "@ant-design/icons";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -101,19 +101,16 @@ const Index: React.FC<IndexProps> = () => {
           loading={false}
           onSearch={handleSearch}
         />
-        <List
-          className={styles["factorial-results"]}
-          size="small"
-          dataSource={jobs}
-          renderItem={(job) => (
-            <List.Item>
-              {`Factorial of ${job.query}`}{" "}
-              {job.result === undefined && <Spin size="small" />}
+        <div className={styles["factorial-results"]}>
+          {jobs.map((job) => (
+            <div className={styles["factorial-result"]} key={job.id}>
+              {`Factorial of ${job.query}: `}
+              {job.result === undefined && <SyncOutlined spin />}
               {job.result === null && "Error!"}
-              {job.result && `Result: ${job.result}`}
-            </List.Item>
-          )}
-        />
+              {job.result && `${job.result}`}
+            </div>
+          ))}
+        </div>
       </Col>
     </Row>
   );

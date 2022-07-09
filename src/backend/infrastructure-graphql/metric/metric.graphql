@@ -9,6 +9,10 @@ type Query {
   metrics(name: String!, from: String, to: String): [Metric!]!
 }
 
+type Query {
+  metricCount: Int!
+}
+
 type Subscription {
   metricAdded(name: String!): Metric
 }

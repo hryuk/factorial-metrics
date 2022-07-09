@@ -43,14 +43,14 @@ const HistoryChart: React.FC<HistoryChartProps> = (props) => {
   const { getAll } = useMetrics();
 
   const getMetrics = useCallback(async () => {
-    for (let i = 0; i < props.metrics.length; i++) {
+    props.metrics.forEach(async (metric, i) => {
       metricsRef.current[i] = await getAll(
-        props.metrics[i].name,
+        metric.name,
         props.timeRange.from,
         props.timeRange.to
       );
       setMetrics([...metricsRef.current]);
-    }
+    });
   }, [getAll, props.timeRange, props.metrics]);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const HistoryChart: React.FC<HistoryChartProps> = (props) => {
     () => ({
       title: props.title,
       width: width - 48,
-      height: height - 80,
+      height: height - 80 - (props.title ? 60 : 0),
       cursor: {
         drag: {
           setScale: false,
@@ -114,7 +114,7 @@ const HistoryChart: React.FC<HistoryChartProps> = (props) => {
   return (
     <Card ref={chartCardRef} className={styles["chart"]}>
       <div id="root" ref={chartRef}></div>
-      {domLoaded && metrics.length === props.metrics.length && (
+      {domLoaded && metrics.length === props.metrics.length && metrics[0] && (
         <UplotReact
           options={options}
           data={[

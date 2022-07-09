@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import client from "../apollo-client";
 
 export interface Metric {
@@ -10,6 +10,7 @@ export interface Metric {
 
 interface MetricsHook {
   getAll: (name: string, from?: Date, to?: Date) => Promise<Metric[]>;
+  getCount: () => Promise<number>;
   isLoading: boolean;
 }
 
@@ -36,5 +37,20 @@ export const useMetrics = (): MetricsHook => {
     return data.metrics;
   }, []);
 
-  return { getAll, isLoading };
+  const getCount = useCallback(async () => {
+    setLoading(true);
+
+    const { data } = await client.query({
+      query: gql`
+        query metricCount {
+          metricCount
+        }
+      `,
+    });
+
+    setLoading(false);
+    return data.metricCount;
+  }, []);
+
+  return { getAll, isLoading, getCount };
 };

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import styles from "./layout.module.less";
+import styles from "./layout.module.scss";
 
 import Navbar from "../components/Navbar";
 
