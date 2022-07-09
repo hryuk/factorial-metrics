@@ -16,7 +16,7 @@ const wsLink =
         createClient({
           url:
             process.env.NODE_ENV === "production"
-              ? "https://factorial-metrics.hryuk.dev/graphql"
+              ? "wss://factorial-metrics.hryuk.dev/graphql"
               : "ws://localhost:3000/graphql",
         })
       )
