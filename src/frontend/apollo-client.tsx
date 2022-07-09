@@ -4,14 +4,20 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 
 const httpLink = new HttpLink({
-  uri: process.env.APP_HTTP_URL ?? "http://localhost:3000/graphql",
+  uri:
+    process.env.NODE_ENV === "production"
+      ? "https://factorial-metrics.hryuk.dev/graphql"
+      : "http://localhost:3000/graphql",
 });
 
 const wsLink =
   typeof window !== "undefined"
     ? new GraphQLWsLink(
         createClient({
-          url: process.env.APP_WS_URL ?? "ws://localhost:3000/graphql",
+          url:
+            process.env.NODE_ENV === "production"
+              ? "https://factorial-metrics.hryuk.dev/graphql"
+              : "ws://localhost:3000/graphql",
         })
       )
     : null;
