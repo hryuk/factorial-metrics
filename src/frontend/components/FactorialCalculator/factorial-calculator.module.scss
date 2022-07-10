@@ -1,0 +1,44 @@
+.factorial-calculator{
+    display: flex;
+    flex:1;
+    max-height: 40px;
+    max-width: 500px;
+}
+
+.factorial-calculator-error{
+
+    button {
+        background-color: #ff4d4fed;
+        border-color: #ff4d4f;
+    }
+
+    :hover{
+        background-color: #ff6f4ffd;
+        border-color: #ff6f4ffd;
+    }
+}
+
+.factorial-calculator-warning{
+
+    button {
+        background-color: #ffc73f;
+        border-color: #ffc73f;
+    }
+
+    :hover{
+        background-color: #ffc53d;
+        border-color: #ffc53d;
+    }
+}
+
+.factorial-results{
+    display: flex;
+    flex:1;
+    max-height: calc(100% - 50px);
+    min-height: calc(100% - 50px);
+    overflow-y: auto;
+    margin-top: 40px;
+    min-width: 500px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}

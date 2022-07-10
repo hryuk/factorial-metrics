@@ -8,11 +8,12 @@ export class FactorialResolver {
 
   @Mutation()
   async factorial(@Args("number") number: number) {
+    const factorialResult = await this.calculateFactorial.factorial(
+      await toFactorialInput(number)
+    );
     return {
-      result: await this.calculateFactorial.factorial(
-        await toFactorialInput(number)
-      ),
-      seconds: 3,
+      result: factorialResult.result,
+      seconds: factorialResult.seconds,
     };
   }
 }

@@ -1,4 +1,3 @@
-
 .index-page{
     display:flex;
     max-height: 100%;
@@ -12,6 +11,15 @@
     max-height: 100%;
 }
 
+.live-chart{
+    flex-direction: column;
+    display: flex;
+    flex: 1;
+}
+.first-chart {
+    margin-bottom: 20px;
+}
+
 .factorial-controls{
     display: flex;
     flex-direction: column;
@@ -21,35 +29,4 @@
     min-height: 600px;
     align-items: center;
 
-}
-.factorial-calculator{
-    display: flex;
-    flex:1;
-    max-height: 40px;
-    max-width: 500px;
-}
-
-.factorial-results{
-    display: flex;
-    flex:1;
-    max-height: calc(100% - 50px);
-    min-height: calc(100% - 50px);
-    overflow-y: auto;
-    margin-top: 40px;
-    min-width: 500px;
-    flex-direction: column;
-    flex-wrap: nowrap;
-}
-
-.factorial-result{
- 
-}
-
-.live-chart{
-    flex-direction: column;
-    display: flex;
-    flex: 1;
-}
-.first-chart {
-    margin-bottom: 20px;
 }
