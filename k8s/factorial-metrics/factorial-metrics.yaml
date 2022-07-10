@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: factorial-metrics
+  labels:
+    app: factorial-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: factorial-metrics
+  template:
+    metadata:
+      labels:
+        app: factorial-metrics
+    spec:
+      containers:
+        - name: factorial-metrics
+          image: ghcr.io/hryuk/factorial-metrics:latest
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: env
+                  key: DATABASE_URL
+            - name: REDIS_HOST
+              value: "redis-leader"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: APP_HTTP_URL
+              value: "https://factorial-metrics.hryuk.dev/graphql"
+            - name: APP_WS_URL
+              value: "ws://factorial-metrics.hryuk.dev/graphql"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: factorial-metrics-service
+spec:
+  selector:
+    app: factorial-metrics
+  ports:
+    - protocol: TCP
+      port: 3000

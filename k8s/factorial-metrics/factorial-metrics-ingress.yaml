@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: factorial-metrics-ingress
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - secretName: factorial-metrics-tls
+      hosts:
+        - factorial-metrics.hryuk.dev
+  rules:
+    - host: factorial-metrics.hryuk.dev
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: factorial-metrics-service
+              servicePort: 3000
