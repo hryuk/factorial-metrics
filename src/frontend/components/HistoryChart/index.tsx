@@ -1,4 +1,3 @@
-import { Card } from "antd";
 import React, {
   useCallback,
   useEffect,
@@ -7,12 +6,13 @@ import React, {
   useState,
 } from "react";
 
+import { Card } from "antd";
 import UplotReact from "uplot-react";
-import "uplot/dist/uPlot.min.css";
 import { useElementSize } from "usehooks-ts";
 
 import { Metric, useMetrics } from "../../hooks/useMetrics";
 
+import "uplot/dist/uPlot.min.css";
 import styles from "./historychart.module.scss";
 
 export interface TimeRange {
@@ -32,7 +32,6 @@ interface HistoryChartProps {
 
 const HistoryChart: React.FC<HistoryChartProps> = (props) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
-  const [domLoaded, setDomLoaded] = useState<boolean>(false);
 
   const [chartCardRef, { width, height }] = useElementSize();
 
@@ -105,16 +104,10 @@ const HistoryChart: React.FC<HistoryChartProps> = (props) => {
     [width, height, props.metrics, props.title]
   );
 
-  useEffect(() => {
-    if (chartRef.current) {
-      setDomLoaded(true);
-    }
-  }, []);
-
   return (
     <Card ref={chartCardRef} className={styles["chart"]}>
       <div id="root" ref={chartRef}></div>
-      {domLoaded && metrics.length === props.metrics.length && metrics[0] && (
+      {metrics.length === props.metrics.length && metrics[0] && (
         <UplotReact
           options={options}
           data={[

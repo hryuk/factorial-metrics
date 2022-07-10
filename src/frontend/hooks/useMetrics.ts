@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import client from "../apollo-client";
 
 export interface Metric {
@@ -9,33 +9,40 @@ export interface Metric {
 }
 
 interface MetricsHook {
-  getAll: (name: string, from?: Date, to?: Date) => Promise<Metric[]>;
+  getAll: (metricName: string, from?: Date, to?: Date) => Promise<Metric[]>;
   getCount: () => Promise<number>;
+  subscribe: (metricName: string) => Promise<void>;
+  liveMetrics: Metric[];
   isLoading: boolean;
 }
 
 export const useMetrics = (): MetricsHook => {
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [liveMetrics, setLiveMetrics] = useState<Metric[]>([]);
+  const liveMetricsRef = useRef<Metric[]>([]);
 
-  const getAll = useCallback(async (name: string, from?: Date, to?: Date) => {
-    setLoading(true);
+  const getAll = useCallback(
+    async (metricName: string, from?: Date, to?: Date) => {
+      setLoading(true);
 
-    const { data } = await client.query({
-      query: gql`
-        query GetMetrics($name: String!, $from: String, $to: String) {
-          metrics(name: $name, from: $from, to: $to) {
-            name
-            value
-            timestamp
+      const { data } = await client.query({
+        query: gql`
+          query GetMetrics($name: String!, $from: String, $to: String) {
+            metrics(name: $name, from: $from, to: $to) {
+              name
+              value
+              timestamp
+            }
           }
-        }
-      `,
-      variables: { name, from, to },
-    });
+        `,
+        variables: { name: metricName, from, to },
+      });
 
-    setLoading(false);
-    return data.metrics;
-  }, []);
+      setLoading(false);
+      return data.metrics;
+    },
+    []
+  );
 
   const getCount = useCallback(async () => {
     setLoading(true);
@@ -52,5 +59,36 @@ export const useMetrics = (): MetricsHook => {
     return data.metricCount;
   }, []);
 
-  return { getAll, isLoading, getCount };
+  const subscribe = useCallback(async (metricName: string) => {
+    client
+      .subscribe({
+        query: gql`
+          subscription MetricAdded($name: String!) {
+            metricAdded(name: $name) {
+              name
+              value
+              timestamp
+            }
+          }
+        `,
+        variables: { name: metricName },
+      })
+      .subscribe((newData: any) => {
+        if (liveMetricsRef.current.length === 200) {
+          liveMetricsRef.current = [
+            ...liveMetricsRef.current.slice(1),
+            newData.data.metricAdded,
+          ];
+        } else {
+          liveMetricsRef.current = [
+            ...liveMetricsRef.current,
+            newData.data.metricAdded,
+          ];
+        }
+
+        setLiveMetrics(liveMetricsRef.current);
+      });
+  }, []);
+
+  return { getAll, isLoading, getCount, subscribe, liveMetrics };
 };
