@@ -1,25 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
-
+import React, { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Input } from "antd";
+import { SendOutlined, SyncOutlined } from "@ant-design/icons";
+
+import { useFactorial } from "../../hooks/useFactorial";
 
 import styles from "./factorial-calculator.module.scss";
 
 const { Search } = Input;
-
-import { gql } from "@apollo/client";
-import client from "../../apollo-client";
-
-import { SendOutlined, SyncOutlined } from "@ant-design/icons";
-
-import { v4 as uuidv4 } from "uuid";
-
-interface Job {
-  id: string;
-  query: number;
-  result: string | undefined | null;
-  duration?: number;
-  errors: string[];
-}
 
 const MAX_CALCULABLE_NUMBER = 12;
 const SLOW_CALCULABLE_NUMBER = 10;
@@ -27,8 +15,7 @@ const SLOW_CALCULABLE_NUMBER = 10;
 interface FactorialCalculatorProps {}
 
 const FactorialCalculator: React.FC<FactorialCalculatorProps> = () => {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const jobsRef = useRef<Job[]>([]);
+  const { calculateFactorial, jobs } = useFactorial();
 
   const [status, setStatus] = useState<"error" | "warning" | undefined>(
     undefined
@@ -48,55 +35,8 @@ const FactorialCalculator: React.FC<FactorialCalculatorProps> = () => {
 
   const handleSearch = (value) => {
     const id = uuidv4();
-    setJobs([{ id, query: value, result: undefined, errors: [] }, ...jobs]);
+    calculateFactorial({ id, query: value, result: undefined, errors: [] });
   };
-
-  useEffect(() => {
-    const doRequest = async (newJob: Job) => {
-      try {
-        const data = await client.mutate({
-          mutation: gql`
-          mutation {
-            factorial(number: ${newJob.query}) {
-              result
-              seconds
-            }
-          }
-        `,
-        });
-
-        setJobs(
-          jobsRef.current.map((v) => {
-            if (v.id === newJob.id) {
-              return {
-                ...v,
-                result: data.data.factorial.result,
-                duration: data.data.factorial.seconds,
-              };
-            } else {
-              return v;
-            }
-          })
-        );
-      } catch (error) {
-        console.error(error);
-        setJobs(
-          jobsRef.current.map((v) => {
-            if (v.id === newJob.id) {
-              return { ...v, result: null, errors: [error] };
-            } else {
-              return v;
-            }
-          })
-        );
-      }
-    };
-
-    jobsRef.current = jobs;
-    if (jobs.length > 0 && jobs[0].result === undefined) {
-      doRequest(jobs[0]);
-    }
-  }, [jobs]);
 
   return (
     <>
