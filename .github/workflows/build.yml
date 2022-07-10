@@ -43,15 +43,15 @@ jobs:
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
-      #- name: Set Kubernetes deployment image
-      #  uses: steebchen/kubectl@v2.0.0
-      #  with:
-      #    config: ${{ secrets.KUBE_CONFIG_DATA }}
-      #    command: set image --record deployment/factorial-metrics web=ghcr.io/hryuk/factorial-metrics:latest@${{ steps.docker_build.outputs.digest }}
+      - name: Set Kubernetes deployment image
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG_DATA }}
+          command: set image --record deployment/factorial-metrics factorial-metrics=ghcr.io/hryuk/factorial-metrics:latest@${{ steps.docker_build.outputs.digest }}
 
-      #- name: Verify deployment
-      #  uses: steebchen/kubectl@v2.0.0
-      #  with:
-      #    config: ${{ secrets.KUBE_CONFIG_DATA }}
-      #    version: v1.21.0
-      #    command: rollout status deployment/factorial-metrics
+      - name: Verify deployment
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG_DATA }}
+          version: v1.21.0
+          command: rollout status deployment/factorial-metrics
